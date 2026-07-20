@@ -1105,11 +1105,14 @@ body {
   .filter-row {
     align-items: stretch;
     flex-direction: column;
+    gap: 10px;
   }
 
   .filter-group {
+    flex: 0 0 auto;
     width: 100%;
     max-width: none;
+    gap: 6px;
   }
 
   .filter-select,
