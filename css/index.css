@@ -1040,7 +1040,8 @@ body {
 
 .filter-group {
   display: grid;
-  flex: 1 1 220px;
+  flex: 0 1 280px;
+  width: min(100%, 280px);
   max-width: 280px;
   gap: 7px;
 }
@@ -1101,15 +1102,15 @@ body {
   cursor: not-allowed;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 760px) {
   .filter-row {
     align-items: stretch;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .filter-group {
-    flex: 0 0 auto;
+    flex: none;
     width: 100%;
     max-width: none;
     gap: 6px;
