@@ -95,10 +95,10 @@
     <section class="page-heading">
       <div>
 
-        <h2>Search Jig Records</h2>
+        <h2>Search and Find Jigs</h2>
 
         <p class="page-heading__description">
-          Search by jig ID, location, jig name or description.
+          Search by jig ID, location, jig name or description and filter by location.
         </p>
       </div>
     </section>
@@ -138,6 +138,14 @@
           </select>
         </div>
 
+        <div class="filter-group">
+          <label for="statusFilter">Status</label>
+
+          <select id="statusFilter" class="filter-select">
+            <option value="">All Statuses</option>
+          </select>
+        </div>
+
         <button
           id="clearFiltersButton"
           class="clear-filters-button"
@@ -157,10 +165,10 @@
     <section class="records-panel">
       <div class="records-panel__header">
         <div>
-          <h3>Jig Records</h3>
+          <h3>Jig Master List</h3>
 
           <p>
-            Select or search a jig to view its information.
+            Select a jig to view its information.
           </p>
         </div>
       </div>
@@ -347,6 +355,7 @@
     const detailRemarks = document.getElementById("detailRemarks");
     const detailLastUpdated = document.getElementById("detailLastUpdated");
     const detailCreator = document.getElementById("detailCreator");
+    const statusFilter = document.getElementById("statusFilter");
 
     let allJigs = [];
 
@@ -474,10 +483,6 @@
               `;
 
            return `
-
-
-            <tr class="jig-row">
-
               <tr
                 class="jig-row"
                 data-jig-id="${escapeHtml(jig.jigId)}"
@@ -549,52 +554,71 @@
       `;
     }
 
+    function populateStatusFilter(jigs) {
+      const statuses = [
+        ...new Set(
+          jigs
+            .map(jig => jig.status)
+            .filter(Boolean)
+        )
+      ].sort();
+
+      statusFilter.innerHTML = `
+        <option value="">All Statuses</option>
+        ${statuses
+          .map(status => `
+            <option value="${escapeHtml(status)}">
+              ${escapeHtml(status)}
+            </option>
+          `)
+          .join("")}
+      `;
+    }
+
     function applyFilters() {
-      const searchTerm =
+      const searchValue =
         searchInput.value.trim().toLowerCase();
 
-      const selectedLocation =
+      const locationValue =
         locationFilter.value.trim().toLowerCase();
 
-      const results = allJigs
-        .filter(jig => {
-          const matchesSearch =
-            searchTerm === "" ||
-            [
-              jig.jigId,
-              jig.jigName,
-              jig.description,
-              jig.modelUsed,
-              jig.location,
-              jig.remarks
-            ].some(value =>
-              String(value ?? "")
-                .toLowerCase()
-                .includes(searchTerm)
-            );
+      const statusValue =
+        statusFilter.value.trim().toLowerCase();
 
-          const matchesLocation =
-            selectedLocation === "" ||
-            String(jig.location ?? "")
-              .trim()
-              .toLowerCase() === selectedLocation;
+      const filteredJigs = allJigs.filter(jig => {
+        const searchableText = [
+          jig.jigId,
+          jig.jigName,
+          jig.description,
+          jig.modelUsed,
+          jig.location,
+          jig.status,
+          jig.remarks
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
 
-          return matchesSearch && matchesLocation;
-        })
-        .sort(
-          (a, b) =>
-            Number(a.no ?? 0) -
-            Number(b.no ?? 0)
+        const matchesSearch =
+          !searchValue ||
+          searchableText.includes(searchValue);
+
+        const matchesLocation =
+          !locationValue ||
+          String(jig.location || "").toLowerCase() === locationValue;
+
+        const matchesStatus =
+          !statusValue ||
+          String(jig.status || "").toLowerCase() === statusValue;
+
+        return (
+          matchesSearch &&
+          matchesLocation &&
+          matchesStatus
         );
+      });
 
-      renderJigs(results);
-
-      clearSearchButton.hidden =
-        searchInput.value.trim() === "";
-
-      clearFiltersButton.disabled =
-        searchInput.value.trim() === "" &&
-        locationFilter.value === "";
+      renderJigs(filteredJigs);
     }
 
     function openImageModal(imageUrl, jigId) {
@@ -695,6 +719,7 @@
         allJigs = await initialiseJigSearch();
 
         populateLocationFilter(allJigs);
+        populateStatusFilter(allJigs);
         applyFilters();
         statusMessage.textContent = "";
       } catch (error) {
@@ -771,8 +796,8 @@
     clearFiltersButton.addEventListener("click", () => {
       searchInput.value = "";
       locationFilter.value = "";
+      statusFilter.value = "";
 
-      searchInput.focus();
       applyFilters();
     });
 
@@ -818,6 +843,8 @@
         closeJigImageModal();
       }
     });
+
+    statusFilter.addEventListener("change", applyFilters);
     
   </script>
 
