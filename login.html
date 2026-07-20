@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Sign In | Jig Master List</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./css/login.css">
+</head>
+
+<body class="login-page">
+  <main class="login-layout">
+    <section class="login-brand-panel">
+      <div class="login-brand-panel__content">
+
+        <p class="login-brand-panel__eyebrow">
+          PRODUCTION MANAGEMENT
+        </p>
+
+        <h1>Jig Master List</h1>
+
+        <p class="login-brand-panel__description">
+          Search, review and manage production jig information
+          from an app.
+        </p>
+
+      </div>
+    </section>
+
+    <section class="login-form-panel">
+      <div class="login-card">
+        <div class="login-card__header">
+          <div class="login-mobile-logo">
+            JM
+          </div>
+
+          <p class="login-card__eyebrow">
+            WELCOME 
+          </p>
+
+          <h2>Sign in to continue</h2>
+
+          <p>
+            Enter your employee ID and password to access the system.
+          </p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="employeeId">
+              Employee ID
+            </label>
+
+            <div class="input-wrapper">
+              <span
+                class="input-wrapper__icon"
+                aria-hidden="true"
+              >
+                ID
+              </span>
+
+              <input
+                id="employeeId"
+                name="employeeId"
+                type="text"
+                inputmode="numeric"
+                autocomplete="username"
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pin">
+              PIN
+            </label>
+
+            <div class="input-wrapper">
+              <span
+                class="input-wrapper__icon"
+                aria-hidden="true"
+              >
+                ●
+              </span>
+
+              <input
+                id="pin"
+                name="pin"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                required
+              >
+
+              <button
+                id="togglePinButton"
+                class="password-toggle"
+                type="button"
+                aria-label="Show PIN"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+
+          <button
+            id="loginButton"
+            class="login-button"
+            type="submit"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <div
+          id="loginMessage"
+          class="login-message"
+          role="alert"
+          aria-live="polite"
+        ></div>
+
+        <p class="login-support-text">
+          Contact the engineer if you cannot access
+          your account.
+        </p>
+      </div>
+
+      <p class="login-footer">
+        Created by Najmi and Adilah (2026)
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loginEmployee } from "./js/auth.js";
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const loginMessage =
+      document.getElementById("loginMessage");
+
+    const employeeIdInput =
+      document.getElementById("employeeId");
+
+    const pinInput =
+      document.getElementById("pin");
+
+    const togglePinButton =
+      document.getElementById("togglePinButton");
+
+    togglePinButton.addEventListener("click", () => {
+      const isHidden = pinInput.type === "password";
+
+      pinInput.type = isHidden ? "text" : "password";
+
+      togglePinButton.textContent =
+        isHidden ? "Hide" : "Show";
+
+      togglePinButton.setAttribute(
+        "aria-label",
+        isHidden ? "Hide PIN" : "Show PIN"
+      );
+    });
+
+    loginForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const employeeId = employeeIdInput.value.trim();
+      const pin = pinInput.value;
+
+      try {
+        loginButton.disabled = true;
+        loginButton.textContent = "Signing in...";
+
+        loginMessage.className =
+          "login-message login-message--loading";
+
+        loginMessage.textContent =
+          "Checking your account...";
+
+        await loginEmployee(employeeId, pin);
+
+        loginMessage.className =
+          "login-message login-message--success";
+
+        loginMessage.textContent =
+          "Sign in successful. Opening application...";
+
+        window.location.replace("./index.html");
+      } catch (error) {
+        console.error(error);
+
+        loginMessage.className =
+          "login-message login-message--error";
+
+        loginMessage.textContent =
+          "Invalid employee ID or PIN.";
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign In";
+      }
+    });
+  </script>
+</body>
+</html>

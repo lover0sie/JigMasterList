@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Jig Master List</title>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+  <!-- Top navigation -->
+  <header class="topbar">
+    <div class="topbar__content">
+      <div class="brand">
+      
+
+        <div>
+          <h1 class="brand__title">Jig Master List</h1>
+          <p class="brand__subtitle">
+            Production Jig Management System
+          </p>
+        </div>
+      </div>
+
+      <div class="user-panel">
+        <div class="user-panel__details">
+          <span id="employeeName" class="user-panel__name">
+            Loading...
+          </span>
+
+          <div class="user-panel__meta">
+            <span id="employeeId"></span>
+            <span id="roleBadge" class="role-badge"></span>
+          </div>
+        </div>
+
+        <button
+          id="logoutButton"
+          class="button button--secondary"
+          type="button"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main application -->
+  <main class="page-container">
+    <!-- Navigation -->
+    <nav class="main-navigation" aria-label="Main navigation">
+      <button
+        class="nav-button nav-button--active"
+        type="button"
+      >
+        <span class="nav-button__icon">🔎︎</span>
+        Search
+      </button>
+
+      <button
+        id="updateNavigation"
+        class="nav-button"
+        type="button"
+        hidden
+      >
+        <span class="nav-button__icon">✎</span>
+        Update
+      </button>
+
+      <button
+        class="nav-button"
+        type="button"
+      >
+        <span class="nav-button__icon">☷</span>
+        View
+      </button>
+    </nav>
+
+    <!-- Page introduction -->
+    <section class="page-heading">
+      <div>
+
+        <h2>Search Jig Records</h2>
+
+        <p class="page-heading__description">
+          Search by jig ID, location, jig name or description.
+        </p>
+      </div>
+    </section>
+
+    <!-- Search and Filter card -->
+    <section class="search-panel">
+      <div class="search-container">
+        <span class="search-container__icon" aria-hidden="true">
+          ⌕
+        </span>
+
+        <input
+          id="searchInput"
+          class="search-input"
+          type="search"
+          placeholder="Search jig ID, location, name or description..."
+          autocomplete="off"
+        >
+
+        <button
+          id="clearSearchButton"
+          class="clear-search-button"
+          type="button"
+          aria-label="Clear search"
+          hidden
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="locationFilter">Location</label>
+
+          <select id="locationFilter" class="filter-select">
+            <option value="">All locations</option>
+          </select>
+        </div>
+
+        <button
+          id="clearFiltersButton"
+          class="clear-filters-button"
+          type="button"
+        >
+          Clear filters
+        </button>
+      </div>
+
+      <div class="search-summary">
+        <p id="resultCount">0 jig records</p>
+        <p id="statusMessage" class="status-message"></p>
+      </div>
+    </section>
+
+    <!-- Jig records -->
+    <section class="records-panel">
+      <div class="records-panel__header">
+        <div>
+          <h3>Jig Records</h3>
+
+          <p>
+            Select or search a jig to view its information.
+          </p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="jig-table">
+          <thead>
+            <tr>
+            <th>No.</th>
+            <th>Image</th>
+            <th>Jig ID</th>
+            <th>Jig Name</th>
+            <th>Status</th>
+            <th>Location</th>
+          </tr>
+          </thead>
+
+          <tbody id="jigTableBody">
+            <tr>
+              <td colspan="6">
+                <div class="loading-state">
+                  Loading jig records...
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+    <div id="imageModal" class="image-modal" hidden>
+        <div class="image-modal__backdrop" data-close-image-modal></div>
+        <div class="image-modal__content" role="dialog"  aria-modal="true" aria-labelledby="imageModalTitle">
+          <div class="image-modal__header">
+              <h3 id="imageModalTitle">Jig Image</h3>
+              <button id="closeImageModal" class="image-modal__close" type="button" aria-label="Close image">
+                ×
+              </button>
+          </div>
+
+          <div class="image-modal__body">
+              <img id="fullJigImage" class="full-jig-image" alt="">
+          </div>
+
+        </div>
+      </div>
+
+    <div id="jigDetailModal" class="detail-modal" hidden>
+    <div class="detail-modal__backdrop" data-close-detail-modal></div>
+    <article class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detailJigName">
+      <header class="detail-card__header">
+        <div>
+          <p class="detail-card__eyebrow">Jig Information</p>
+          <h2 id="detailJigName">Jig Details</h2>
+          <p id="detailJigId" class="detail-card__id"></p>
+        </div>
+
+        <button
+          id="closeDetailModal"
+          class="detail-card__close"
+          type="button"
+          aria-label="Close jig details"
+        >
+          ×
+        </button>
+      </header>
+
+      <div class="detail-card__body">
+
+        <div class="detail-card__image-area">
+
+            <img
+                id="detailJigImage"
+                class="detail-card__image"
+                alt=""
+                hidden
+            >
+
+            <div
+                id="detailImagePlaceholder"
+                class="detail-card__image-placeholder"
+            >
+                No image available
+            </div>
+
+        </div>
+
+        <div class="detail-grid">
+
+            <div class="detail-field">
+                <span class="detail-field__label">Description</span>
+                <p id="detailDescription"></p>
+            </div>
+
+            <div class="detail-field">
+                <span class="detail-field__label">Model Used</span>
+                <p id="detailModel"></p>
+            </div>
+
+            <div class="detail-field">
+                <span class="detail-field__label">Quantity</span>
+                <p id="detailQuantity"></p>
+            </div>
+
+            <div class="detail-field">
+                <span class="detail-field__label">Status</span>
+                <p>
+                    <span id="detailStatus" class="status-badge"></span>
+                </p>
+            </div>
+
+            <div class="detail-field">
+                <span class="detail-field__label">Location</span>
+                <p id="detailLocation"></p>
+            </div>
+
+            <div class="detail-field">
+                <span class="detail-field__label">Last Updated</span>
+                <p id="detailLastUpdated"></p>
+            </div>
+
+        </div>
+
+        <div class="detail-field detail-field--full">
+            <span class="detail-field__label">
+                Created By
+            </span>
+
+            <p id="detailCreator"></p>
+        </div>
+
+        <div class="detail-field detail-field--full">
+            <span class="detail-field__label">
+                Remarks
+            </span>
+
+            <p id="detailRemarks"></p>
+        </div>
+
+      </div>
+    </article>
+  </div>
+
+  <script type="module">
+    import {
+      watchAuthentication,
+      getCurrentEmployee,
+      logoutEmployee
+    } from "./js/auth.js";
+
+    import {
+      initialiseJigSearch,
+      searchJigs
+    } from "./js/search.js";
+
+    const employeeName = document.getElementById("employeeName");
+    const employeeId = document.getElementById("employeeId");
+    const roleBadge = document.getElementById("roleBadge");
+    const updateNavigation = document.getElementById("updateNavigation");
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchButton = document.getElementById("clearSearchButton");
+    const jigTableBody = document.getElementById("jigTableBody");
+    const resultCount = document.getElementById("resultCount");
+    const statusMessage = document.getElementById("statusMessage");
+    const logoutButton = document.getElementById("logoutButton");
+    const imageModal = document.getElementById("imageModal");
+    const fullJigImage = document.getElementById("fullJigImage");
+    const imageModalTitle = document.getElementById("imageModalTitle");
+    const closeImageModal = document.getElementById("closeImageModal");
+    const locationFilter = document.getElementById("locationFilter");
+    const clearFiltersButton = document.getElementById("clearFiltersButton");  
+    const jigDetailModal = document.getElementById("jigDetailModal");
+    const closeDetailModalButton = document.getElementById("closeDetailModal");
+    const detailJigName = document.getElementById("detailJigName");
+    const detailJigId = document.getElementById("detailJigId");
+    const detailJigImage = document.getElementById("detailJigImage");
+    const detailImagePlaceholder = document.getElementById("detailImagePlaceholder");
+    const detailDescription = document.getElementById("detailDescription");
+    const detailModel = document.getElementById("detailModel");
+    const detailQuantity = document.getElementById("detailQuantity");
+    const detailStatus = document.getElementById("detailStatus");
+    const detailLocation = document.getElementById("detailLocation");
+    const detailRemarks = document.getElementById("detailRemarks");
+    const detailLastUpdated = document.getElementById("detailLastUpdated");
+    const detailCreator = document.getElementById("detailCreator");
+
+    let allJigs = [];
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatFirestoreDate(value) {
+      if (!value) {
+        return "—";
+      }
+
+      let date;
+
+      if (typeof value.toDate === "function") {
+        date = value.toDate();
+      } else if (value.seconds) {
+        date = new Date(value.seconds * 1000);
+      } else {
+        date = new Date(value);
+      }
+
+      if (Number.isNaN(date.getTime())) {
+        return "—";
+      }
+
+      return new Intl.DateTimeFormat("en-MY", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function formatRole(role) {
+      if (!role) {
+        return "Viewer";
+      }
+
+      return (
+        role.charAt(0).toUpperCase() +
+        role.slice(1).toLowerCase()
+      );
+    }
+
+    function getStatusClass(status) {
+      const normalisedStatus = String(status ?? "")
+        .trim()
+        .toLowerCase();
+
+      if (
+        normalisedStatus === "in use" ||
+        normalisedStatus === "available" ||
+        normalisedStatus === "ready"
+      ) {
+        return "status-badge--active"; // green color
+      } else if (
+        normalisedStatus === "new" ||
+        normalisedStatus === "trial"
+      ) {
+        return "status-badge--pending"; // yellow color
+      } else if (
+        normalisedStatus === "under maintenance" ||
+        normalisedStatus === "maintenance" || 
+        normalisedStatus === "damaged" || 
+        normalisedStatus === "not available"
+      ) { 
+        return "status-badge--danger"; // red color
+      } else if (
+        normalisedStatus === "retired" ||
+        normalisedStatus === "inactive"
+      ) {
+        return "status-badge--inactive"; // grey
+      } else {
+        return "status-badge--default";
+      }
+    }
+
+    function renderJigs(jigs) {
+      resultCount.textContent =
+        `${jigs.length} jig record${jigs.length === 1 ? "" : "s"}`;
+
+      if (jigs.length === 0) {
+        jigTableBody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state__icon">⌕</div>
+                <h4>No matching jig found</h4>
+                <p>
+                  Try searching with a different jig ID,
+                  location, name or description.
+                </p>
+              </div>
+            </td>
+          </tr>
+        `;
+
+        return;
+      }
+
+      jigTableBody.innerHTML = jigs
+        .map(jig => {
+          const statusClass = getStatusClass(jig.status);
+
+           const thumbnail = jig.imageUrl
+              ? `
+                <img
+                  class="jig-list-thumbnail"
+                  src="${escapeHtml(jig.imageUrl)}"
+                  alt=""
+                  loading="lazy"
+                >
+              `
+              : `
+                <div class="jig-list-placeholder">
+                  No image
+                </div>
+              `;
+
+           return `
+
+
+            <tr class="jig-row">
+
+              <tr
+                class="jig-row"
+                data-jig-id="${escapeHtml(jig.jigId)}"
+                tabindex="0"
+                role="button"
+                aria-label="View details for ${escapeHtml(jig.jigName)}"
+              >
+                <td data-label="No.">
+                  ${escapeHtml(jig.no ?? "—")}
+                </td>
+
+              <td data-label="Image">
+                ${thumbnail}
+              </td>
+
+              <td data-label="Jig ID">
+                <span class="jig-id">
+                  ${escapeHtml(jig.jigId)}
+                </span>
+              </td>
+
+               <td data-label="Jig Name">
+                <div class="jig-name-cell">
+                  <strong>${escapeHtml(jig.jigName ?? "Unnamed jig")}</strong>
+                </div>
+              </td>
+
+              <td data-label="Status">
+                <span class="status-badge ${statusClass}">
+                   ${escapeHtml(jig.status ?? "Unknown")}
+                </span>
+              </td>
+
+              <td data-label="Location">
+                <span class="location-badge">
+                  ${escapeHtml(jig.location)}
+                </span>
+              </td>
+            </tr>
+          `;
+        })
+        .join("");
+    }
+
+    function populateLocationFilter(jigs) {
+      const locations = [
+        ...new Set(
+          jigs
+            .map(jig => String(jig.location ?? "").trim())
+            .filter(Boolean)
+        )
+      ].sort((a, b) =>
+        a.localeCompare(b, undefined, {
+          numeric: true,
+          sensitivity: "base"
+        })
+      );
+
+      locationFilter.innerHTML = `
+        <option value="">All locations</option>
+
+        ${locations
+          .map(location => `
+            <option value="${escapeHtml(location)}">
+              ${escapeHtml(location)}
+            </option>
+          `)
+          .join("")}
+      `;
+    }
+
+    function applyFilters() {
+      const searchTerm =
+        searchInput.value.trim().toLowerCase();
+
+      const selectedLocation =
+        locationFilter.value.trim().toLowerCase();
+
+      const results = allJigs
+        .filter(jig => {
+          const matchesSearch =
+            searchTerm === "" ||
+            [
+              jig.jigId,
+              jig.jigName,
+              jig.description,
+              jig.modelUsed,
+              jig.location,
+              jig.remarks
+            ].some(value =>
+              String(value ?? "")
+                .toLowerCase()
+                .includes(searchTerm)
+            );
+
+          const matchesLocation =
+            selectedLocation === "" ||
+            String(jig.location ?? "")
+              .trim()
+              .toLowerCase() === selectedLocation;
+
+          return matchesSearch && matchesLocation;
+        })
+        .sort(
+          (a, b) =>
+            Number(a.no ?? 0) -
+            Number(b.no ?? 0)
+        );
+
+      renderJigs(results);
+
+      clearSearchButton.hidden =
+        searchInput.value.trim() === "";
+
+      clearFiltersButton.disabled =
+        searchInput.value.trim() === "" &&
+        locationFilter.value === "";
+    }
+
+    function openImageModal(imageUrl, jigId) {
+      fullJigImage.src = imageUrl;
+      fullJigImage.alt = `Image of ${jigId}`;
+
+      imageModalTitle.textContent =
+        `${jigId} Image`;
+
+      imageModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeJigImageModal() {
+      imageModal.hidden = true;
+      fullJigImage.removeAttribute("src");
+      fullJigImage.alt = "";
+      document.body.classList.remove("modal-open");
+    }
+
+    function openJigDetail(jig) {
+      detailJigName.textContent = jig.jigName || "Unnamed jig";
+      detailJigId.textContent = jig.jigId || "—";
+      const formattedDescription =
+      (jig.description || "—")
+          .split("|")
+          .map(item => item.trim())
+          .join("<br>");
+
+      detailDescription.innerHTML = formattedDescription;
+      detailModel.textContent = jig.modelUsed || "—";
+      detailQuantity.textContent = jig.quantity ?? "—";
+      detailLocation.textContent = jig.location || "—";
+      detailRemarks.textContent = jig.remarks || "No remarks";
+      detailLastUpdated.textContent = formatFirestoreDate(jig.lastUpdated);
+      detailCreator.textContent = jig.creator || "—";
+      detailStatus.textContent = jig.status || "Unknown";
+      detailStatus.className = `status-badge ${getStatusClass(jig.status)}`;
+
+      if (jig.imageUrl) {
+        detailJigImage.src = jig.imageUrl;
+        detailJigImage.alt =
+          `Image of ${jig.jigName || jig.jigId}`;
+
+        detailJigImage.hidden = false;
+        detailImagePlaceholder.hidden = true;
+      } else {
+        detailJigImage.hidden = true;
+        detailJigImage.removeAttribute("src");
+        detailImagePlaceholder.hidden = false;
+      }
+
+      jigDetailModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeJigDetail() {
+      jigDetailModal.hidden = true;
+      detailJigImage.removeAttribute("src");
+      document.body.classList.remove("modal-open");
+    }
+
+    watchAuthentication(async user => {
+      if (!user) {
+        window.location.replace("./login.html");
+        return;
+      }
+
+      try {
+        const employee = await getCurrentEmployee();
+
+        if (!employee || employee.active !== true) {
+          await logoutEmployee();
+          return;
+        }
+
+        employeeName.textContent =
+          employee.name || "Employee";
+
+        employeeId.textContent =
+          employee.employeeId || "";
+
+        roleBadge.textContent =
+          formatRole(employee.role);
+
+        roleBadge.className =
+          `role-badge role-badge--${employee.role ?? "viewer"}`;
+
+        const canUpdate =
+          employee.role === "engineer" ||
+          employee.role === "admin";
+
+        updateNavigation.hidden = !canUpdate;
+
+        statusMessage.textContent =
+          "Loading jig records...";
+
+        allJigs = await initialiseJigSearch();
+
+        populateLocationFilter(allJigs);
+        applyFilters();
+        statusMessage.textContent = "";
+      } catch (error) {
+        console.error(error);
+
+        statusMessage.textContent =
+          `Unable to load jig records: ${error.message}`;
+      }
+    });
+
+    function openRowDetails(row) {
+      const jigId = row.dataset.jigId;
+
+      const selectedJig = allJigs.find(
+        jig => String(jig.jigId) === jigId
+      );
+
+      if (selectedJig) {
+        openJigDetail(selectedJig);
+      }
+    }
+
+    jigTableBody.addEventListener("click", event => {
+      const row = event.target.closest(".jig-row");
+
+      if (row) {
+        openRowDetails(row);
+      }
+    });
+
+    jigTableBody.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      const row = event.target.closest(".jig-row");
+
+      if (row) {
+        event.preventDefault();
+        openRowDetails(row);
+      }
+    });
+
+    closeDetailModalButton.addEventListener(
+      "click",
+      closeJigDetail
+    );
+
+    jigDetailModal.addEventListener("click", event => {
+      if (event.target.hasAttribute("data-close-detail-modal")) {
+        closeJigDetail();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (
+        event.key === "Escape" &&
+        !jigDetailModal.hidden
+      ) {
+        closeJigDetail();
+      }
+    });
+
+    searchInput.addEventListener(
+      "input",
+      applyFilters
+    );
+
+    locationFilter.addEventListener(
+      "change",
+      applyFilters
+    );
+
+    clearFiltersButton.addEventListener("click", () => {
+      searchInput.value = "";
+      locationFilter.value = "";
+
+      searchInput.focus();
+      applyFilters();
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      await logoutEmployee();
+      window.location.replace("./login.html");
+    });
+
+    jigTableBody.addEventListener("click", event => {
+      const imageButton =
+        event.target.closest(".jig-image-button");
+
+      if (!imageButton) {
+        return;
+      }
+
+      openImageModal(
+        imageButton.dataset.imageUrl,
+        imageButton.dataset.jigId
+      );
+    });
+
+    closeImageModal.addEventListener(
+      "click",
+      closeJigImageModal
+    );
+
+    imageModal.addEventListener("click", event => {
+      if (
+        event.target.hasAttribute(
+          "data-close-image-modal"
+        )
+      ) {
+        closeJigImageModal();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (
+        event.key === "Escape" &&
+        !imageModal.hidden
+      ) {
+        closeJigImageModal();
+      }
+    });
+    
+  </script>
+
+    
+</body>
+</html>
