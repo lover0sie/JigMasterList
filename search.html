@@ -22,12 +22,12 @@
   <link rel="stylesheet" href="./css/index.css">
 </head>
 
-<body class="view-page">
+<body>
   <!-- Top navigation -->
   <header class="topbar">
     <div class="topbar__content">
       <nav class="main-navigation" aria-label="Main navigation">
-      <a id="searchNavigation" class="nav-button" href="./search.html">
+      <a id="searchNavigation" class="nav-button nav-button--active" href="./search.html">
         <span class="nav-button__icon">🔎︎</span>
         Search
       </a>
@@ -42,7 +42,7 @@
         Update
       </button>
 
-      <a id="viewNavigation" class="nav-button nav-button--active" href="./index.html">
+      <a id="viewNavigation" class="nav-button" href="./index.html">
         <span class="nav-button__icon">☷</span>
         View
       </a>
@@ -79,16 +79,16 @@
     <section id="pageHeading" class="page-heading">
       <div>
 
-        <h2 id="pageTitle">Factory Location</h2>
+        <h2 id="pageTitle">Search and Find Jigs</h2>
 
         <p id="pageDescription" class="page-heading__description">
-          Click a mapped factory area to list jig names at that location.
+          Search by jig ID, location, jig name or description and filter by location.
         </p>
       </div>
     </section>
 
     <!-- Search and Filter card -->
-    <section id="searchPanel" class="search-panel" hidden>
+    <section id="searchPanel" class="search-panel">
       <div class="search-container">
         <span class="search-container__icon" aria-hidden="true">
           ⌕
@@ -146,7 +146,7 @@
     </section>
 
     <!-- Factory layout view -->
-    <section id="layoutPanel" class="layout-panel" aria-labelledby="layoutPanelTitle">
+    <section id="layoutPanel" class="layout-panel" aria-labelledby="layoutPanelTitle" hidden>
       <div class="layout-panel__header">
         <div>
           <h3 id="layoutPanelTitle">Factory Location</h3>
@@ -185,7 +185,7 @@
     </section>
 
     <!-- Jig records -->
-    <section id="recordsPanel" class="records-panel" hidden>
+    <section id="recordsPanel" class="records-panel">
       <div class="records-panel__header">
         <div>
           <h3>Jig Master List</h3>
