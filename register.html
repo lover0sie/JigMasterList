@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Register | Jig Master List</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./css/login.css">
+</head>
+
+<body class="login-page">
+  <main class="login-layout">
+    <section class="login-brand-panel">
+      <div class="login-brand-panel__content">
+        <p class="login-brand-panel__eyebrow">
+          PRODUCTION MANAGEMENT
+        </p>
+
+        <h1>Jig Master List</h1>
+
+        <p class="login-brand-panel__description">
+          Create an employee account for jig search and factory location access.
+        </p>
+      </div>
+    </section>
+
+    <section class="login-form-panel">
+      <div class="login-card">
+        <div class="login-card__header">
+          <p class="login-card__eyebrow">
+            ACCOUNT SETUP
+          </p>
+
+          <h2>Register employee</h2>
+
+          <p>
+            Enter employee details to create a Firebase account and employee profile.
+          </p>
+        </div>
+
+        <form id="registerForm" class="login-form">
+          <div class="form-group">
+            <label for="employeeId">
+              Employee ID
+            </label>
+
+            <div class="input-wrapper">
+              
+
+              <input
+                id="employeeId"
+                name="employeeId"
+                type="text"
+                inputmode="numeric"
+                autocomplete="username"
+                placeholder="Example: 30369"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="employeeName">
+              Name
+            </label>
+
+            <div class="input-wrapper">
+              
+
+              <input
+                id="employeeName"
+                name="employeeName"
+                type="text"
+                autocomplete="name"
+                placeholder="Enter employee name"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="role">
+              Role
+            </label>
+
+            <div class="input-wrapper">
+              
+
+              <select id="role" name="role" class="login-select" required>
+                <option value="engineer">Engineer</option>
+                <option value="operator">Operator</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">
+              Password
+            </label>
+
+            <div class="input-wrapper">
+              
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Minimum 6 characters"
+                minlength="6"
+                required
+              >
+
+              <button
+                id="togglePasswordButton"
+                class="password-toggle"
+                type="button"
+                aria-label="Show password"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+
+          <button
+            id="registerButton"
+            class="login-button"
+            type="submit"
+          >
+            Create Account
+          </button>
+        </form>
+
+        <div
+          id="registerMessage"
+          class="login-message"
+          role="alert"
+          aria-live="polite"
+        ></div>
+
+        <p class="login-support-text">
+          Already have an account?
+          <a href="./login.html">Sign in</a>
+        </p>
+      </div>
+
+      <p class="login-footer">
+        Created by Najmi and Adilah (2026)
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { registerEmployee } from "./js/auth.js";
+
+    const registerForm =
+      document.getElementById("registerForm");
+
+    const registerButton =
+      document.getElementById("registerButton");
+
+    const registerMessage =
+      document.getElementById("registerMessage");
+
+    const employeeIdInput =
+      document.getElementById("employeeId");
+
+    const employeeNameInput =
+      document.getElementById("employeeName");
+
+    const roleInput =
+      document.getElementById("role");
+
+    const passwordInput =
+      document.getElementById("password");
+
+    const togglePasswordButton =
+      document.getElementById("togglePasswordButton");
+
+    togglePasswordButton.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+
+      passwordInput.type = isHidden ? "text" : "password";
+
+      togglePasswordButton.textContent =
+        isHidden ? "Hide" : "Show";
+
+      togglePasswordButton.setAttribute(
+        "aria-label",
+        isHidden ? "Hide password" : "Show password"
+      );
+    });
+
+    registerForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      try {
+        registerButton.disabled = true;
+        registerButton.textContent = "Creating account...";
+
+        registerMessage.className =
+          "login-message login-message--loading";
+
+        registerMessage.textContent =
+          "Creating Firebase account and employee profile...";
+
+        await registerEmployee({
+          employeeId: employeeIdInput.value,
+          name: employeeNameInput.value,
+          role: roleInput.value,
+          password: passwordInput.value
+        });
+
+        registerMessage.className =
+          "login-message login-message--success";
+
+        registerMessage.textContent =
+          "Account created. Opening application...";
+
+        window.location.replace("./index.html");
+      } catch (error) {
+        console.error(error);
+
+        registerMessage.className =
+          "login-message login-message--error";
+
+        registerMessage.textContent =
+          error.message || "Unable to create account.";
+      } finally {
+        registerButton.disabled = false;
+        registerButton.textContent = "Create Account";
+      }
+    });
+  </script>
+</body>
+</html>

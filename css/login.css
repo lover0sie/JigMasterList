@@ -45,7 +45,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -237,10 +238,11 @@ input {
   pointer-events: none;
 }
 
-.input-wrapper input {
+.input-wrapper input,
+.login-select {
   width: 100%;
   height: 50px;
-  padding: 0 54px 0 48px;
+  padding: 0 14px;
   border: 1px solid var(--border-strong);
   border-radius: 11px;
   outline: none;
@@ -252,15 +254,27 @@ input {
     box-shadow var(--transition);
 }
 
+.input-wrapper input[type="password"],
+.input-wrapper input[type="text"]#password {
+  padding-right: 64px;
+}
+
+.login-select {
+  appearance: none;
+  cursor: pointer;
+}
+
 .input-wrapper input::placeholder {
   color: var(--text-muted);
 }
 
-.input-wrapper input:hover {
+.input-wrapper input:hover,
+.login-select:hover {
   border-color: #b8c0cc;
 }
 
-.input-wrapper input:focus {
+.input-wrapper input:focus,
+.login-select:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(18, 90, 203, 0.12);
 }
@@ -360,6 +374,16 @@ input {
   font-size: 11px;
   line-height: 1.55;
   text-align: center;
+}
+
+.login-support-text a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-support-text a:hover {
+  text-decoration: underline;
 }
 
 .login-footer {

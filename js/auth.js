@@ -1,5 +1,6 @@
 import {
   getAuth,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
@@ -7,7 +8,8 @@ import {
 
 import {
   doc,
-  getDoc
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 import { app, db } from "./firebase.js";
@@ -62,6 +64,55 @@ export async function loginEmployee(employeeId, pin) {
   return {
     uid: credential.user.uid,
     ...employee
+  };
+}
+
+export async function registerEmployee({
+  employeeId,
+  password,
+  name,
+  role
+}) {
+  const cleanEmployeeId = String(employeeId ?? "").trim();
+  const cleanName = String(name ?? "").trim();
+  const cleanRole = String(role ?? "").trim().toLowerCase();
+
+  if (!cleanEmployeeId) {
+    throw new Error("Employee ID is required.");
+  }
+
+  if (!cleanName) {
+    throw new Error("Name is required.");
+  }
+
+  if (!["engineer", "operator"].includes(cleanRole)) {
+    throw new Error("Role must be engineer or operator.");
+  }
+
+  const email = employeeIdToEmail(cleanEmployeeId);
+
+  const credential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+
+  await setDoc(
+    doc(db, "employees", credential.user.uid),
+    {
+      active: true,
+      employeeId: cleanEmployeeId,
+      name: cleanName,
+      role: cleanRole
+    }
+  );
+
+  return {
+    uid: credential.user.uid,
+    active: true,
+    employeeId: cleanEmployeeId,
+    name: cleanName,
+    role: cleanRole
   };
 }
 
