@@ -64,8 +64,14 @@ body {
 }
 
 body.view-page {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   overflow: hidden;
+}
+
+.view-page .topbar {
+  flex: 0 0 auto;
 }
 
 /* Top bar */
@@ -464,6 +470,10 @@ body.view-page {
 .layout-panel__summary span:first-child {
   color: var(--text-primary);
   font-weight: 700;
+}
+
+.view-page .layout-panel__summary {
+  display: none;
 }
 
 .factory-layout {
@@ -990,6 +1000,12 @@ body.view-page {
     background: #f7f8fa;
   }
 
+  body.view-page {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
   .topbar__content {
     width: calc(100% - 24px);
     min-height: 66px;
@@ -1005,7 +1021,16 @@ body.view-page {
     padding-top: 18px;
   }
 
+  .view-page .page-container {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    padding-bottom: 12px;
+    overflow: hidden;
+  }
+
   .main-navigation {
+    justify-content: center;
     margin: 0;
     overflow-x: auto;
   }
@@ -1051,6 +1076,11 @@ body.view-page {
     border-radius: 14px;
   }
 
+  .view-page .layout-panel {
+    display: flex;
+    overflow: hidden;
+  }
+
   .layout-panel__header {
     flex-direction: column;
     padding: 15px;
@@ -1062,25 +1092,41 @@ body.view-page {
   }
 
   .factory-layout {
-    overflow-x: auto;
-  }
-
-  .factory-layout__image,
-  .factory-layout__areas {
-    min-width: 720px;
+    height: min(340px, 42vh);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .factory-layout::before {
-    min-width: 720px;
+    width: 960px;
+    height: 360px;
+    min-width: 960px;
+    aspect-ratio: auto;
+  }
+
+  .factory-layout__image {
+    width: 932px;
+    height: 332px;
+    min-width: 0;
+  }
+
+  .factory-layout__areas {
+    width: 932px;
+    height: 332px;
+    min-width: 0;
   }
 
   .factory-view {
+    display: grid;
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    flex: 1 1 auto;
     min-height: 0;
   }
 
   .factory-location-list {
-    height: min(430px, 60vh);
+    height: auto;
+    min-height: 0;
     border-top: 1px solid var(--border);
     border-left: 0;
   }
